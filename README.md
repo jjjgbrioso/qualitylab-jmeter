@@ -168,6 +168,15 @@ How to read the numbers:
 
 The setUp safety check is left out of the dashboard; its label starts with `_`.
 
+### Screenshots (JMeter GUI)
+
+| | |
+| --- | --- |
+| The **Virtual users** thread group: users, ramp-up and duration come from the profile (`${__P(users,1)}` means "the profile's value, or 1") | ![Thread group settings](docs/screenshots/01-thread-group-settings.png) |
+| A 3-user practice run in the GUI with a **View Results Tree** listener: every request and journey passed its assertions | ![View Results Tree](docs/screenshots/02-view-results-tree.png) |
+
+Listeners like View Results Tree are for learning and debugging only. They slow JMeter down, so real load runs use non-GUI mode (see "Running the tests").
+
 ## Troubleshooting
 
 | Problem | Fix |

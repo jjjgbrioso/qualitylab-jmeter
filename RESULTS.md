@@ -16,10 +16,13 @@ Every number below was measured by JMeter on 14 November 2026 and copied from it
 | Smoke (validation) | LOCAL | 1 | 1 min | 57 | 0.00% | 13 ms | 6 ms | 23 ms | 72 ms | 135 ms | 0.979/s |
 | Baseline, LOCAL | LOCAL | 1 | 5 min | 298 | 0.00% | 7 ms | 5 ms | 12 ms | 14 ms | 70 ms | 0.995/s |
 | Baseline, DEPLOYED | DEPLOYED | 1 | 5 min | 222 | 0.00% | 344 ms | 304 ms | 372 ms | 428 ms | 1686 ms | 0.745/s |
+| Load, LOCAL | LOCAL | 10 (ramp 5 min) | 15 min | 7,637 | 0.00% | 5 ms | 3 ms | 9 ms | 10 ms | 46 ms | 8.497/s |
 
-All three runs had **0 errors**. Every assertion passed, including the 5-second response time limit, and every booking made during the runs was cancelled: 5 local + 29 local + 21 deployed, all checked afterwards.
+All four runs had **0 errors**. Every assertion passed, including the 5-second response time limit, and every booking made during the runs was cancelled: 21 on the deployed site, and every JMeter booking on LOCAL (791 in total, including 756 from the load run), all checked afterwards.
 
-Throughput here reflects one user with think time, not capacity: about 1 request per second locally, and 0.75 per second on the deployed site, where each request takes longer.
+**Correction to the response time limit (found during a practice run).** In the runs above, every "Status is 200" check had JMeter's *Ignore Status* option on. That option marks the request as successful again, so the 5-second response time limit could never fail an API request. It is now off, and a 1 ms test limit fails every request as it should. **The results above are still valid:** the slowest response in any run was 1,987 ms, well under 5 seconds, so no request should have failed the limit anyway.
+
+Throughput reflects users with think time, not capacity. Each user sends about 1 request per second, so one user gives about 1 per second locally, 0.75 per second on the deployed site (where each request takes longer), and 10 users about 10 per second. The load run's 8.5 per second is lower than 10 because it includes the 5-minute ramp-up.
 
 ## What the numbers say
 
@@ -33,10 +36,14 @@ Throughput here reflects one user with think time, not capacity: about 1 request
   - **Inference, not measured directly:** most of the ~300 ms is spent between Vercel's nearby edge and the region where the app's functions run, not in the app or the database.
   - **Occasional slow requests,** up to about 2 s, show in the 95th and 99th percentiles of a few reads (search, product details, account details). These look like cold starts or connection set-up, because the same requests are otherwise around 300 ms. The over-time graphs in the dashboard show when they happened.
 - **No defects or errors appeared** at this light load.
+- **Load, LOCAL (10 users):** no slowdown under ten times the baseline load.
+  - The median fell from 5 ms to 3 ms, and the 95th percentile from 14 ms to 10 ms. A likely reason (not measured) is that the server stays warm with steady traffic.
+  - The slowest request after sign-in was 148 ms.
+  - Every 30-second interval at full load reached about 10 requests per second, the most that 10 users with think time can send. So this load did not reach the PC's limit; the stress profile is the test for that.
 
 ## Not run yet
 
-The **load**, **stress**, **spike** and **endurance** profiles are built and documented (see README.md), but they were **not executed** in this phase. As agreed, each needs approval first:
+The **stress**, **spike** and **endurance** profiles are built and documented (see README.md), but have **not been run**. Each needs approval first:
 - on LOCAL, every profile can run;
 - on DEPLOYED, only an approved light load run is allowed (at most 5 users);
 - stress, spike and endurance never run there.
@@ -125,3 +132,33 @@ DEPLOYED https://quality-lab-jb.vercel.app/api/v1, 1 user, 300 s planned, starte
 | **All requests** | 222 | 0.00 | 344 | 304 | 372 | 428 | 1686 | 0.745 |
 
 For a request sent only once per user (the sign-ins, `GET /bank/accounts`, `GET /auth/me`), JMeter's throughput figure is not meaningful.
+
+## Load, LOCAL
+
+LOCAL http://localhost:3100/api/v1, 10 users (ramp-up 300 s), 900 s planned, started 2026-11-14 13:18:29 UTC.
+
+Run by hand with `jmeter.bat` (Phase 5 install guide). The setUp safety sample is left out of these numbers, as in the other runs.
+
+| Request or journey | Samples | Errors % | Average | Median | 90th pct | 95th pct | 99th pct | Throughput /s |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Journey - Banking: account details and history | 759 | 0.00 | 8 | 7 | 10 | 12 | 55 | 0.853 |
+| Journey - Booking: create, read, cancel | 756 | 0.00 | 24 | 21 | 28 | 33 | 78 | 0.855 |
+| Journey - Shop: browse, search, view a product | 763 | 0.00 | 8 | 7 | 10 | 11 | 45 | 0.855 |
+| Journey - Travel: search hotels and check a room | 757 | 0.00 | 6 | 6 | 8 | 10 | 16 | 0.852 |
+| GET /auth/me | 10 | 0.00 | 4 | 3 | 9 | 10 | 10 | 0.037 |
+| GET /bank/accounts | 10 | 0.00 | 9 | 4 | 46 | 51 | 51 | 0.037 |
+| GET /bank/accounts/{id} (account details) | 759 | 0.00 | 3 | 3 | 4 | 5 | 11 | 0.853 |
+| GET /bank/accounts/{id}/transactions (history) | 758 | 0.00 | 5 | 4 | 6 | 8 | 45 | 0.853 |
+| GET /bookings/{id} (details) | 756 | 0.00 | 5 | 4 | 5 | 6 | 49 | 0.855 |
+| GET /hotels?destination= (hotel search) | 757 | 0.00 | 3 | 2 | 4 | 4 | 10 | 0.853 |
+| GET /products (listing) | 766 | 0.00 | 3 | 2 | 3 | 4 | 7 | 0.857 |
+| GET /products?q= (search) | 763 | 0.00 | 3 | 2 | 3 | 4 | 10 | 0.855 |
+| GET /products/{id} (details) | 760 | 0.00 | 2 | 2 | 3 | 4 | 6 | 0.853 |
+| GET /rooms/{id} (room availability) | 756 | 0.00 | 3 | 3 | 4 | 6 | 11 | 0.855 |
+| POST /auth/login (banking) | 10 | 0.00 | 70 | 68 | 85 | 86 | 86 | 0.037 |
+| POST /auth/login (ecommerce) | 10 | 0.00 | 75 | 69 | 128 | 134 | 134 | 0.037 |
+| POST /auth/login (travel) | 10 | 0.00 | 68 | 68 | 73 | 73 | 73 | 0.037 |
+| POST /bookings (create) | 756 | 0.00 | 10 | 9 | 12 | 13 | 41 | 0.855 |
+| POST /bookings/{id}/cancel (clean-up) | 756 | 0.00 | 9 | 9 | 11 | 12 | 55 | 0.856 |
+| **All requests** | 7637 | 0.00 | 5 | 3 | 9 | 10 | 46 | 8.497 |
+

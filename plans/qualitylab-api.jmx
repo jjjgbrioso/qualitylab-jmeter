@@ -235,7 +235,7 @@ if (problem) {
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -266,7 +266,7 @@ if (problem) {
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -297,7 +297,7 @@ if (problem) {
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -332,7 +332,7 @@ if (problem) {
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -367,7 +367,7 @@ if (problem) {
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -405,7 +405,7 @@ if (problem) {
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -436,7 +436,7 @@ if (problem) {
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -465,7 +465,7 @@ if (problem) {
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -509,7 +509,7 @@ if (problem) {
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -546,7 +546,7 @@ if (problem) {
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -597,7 +597,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -628,7 +628,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -680,7 +680,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">201</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 201</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -730,7 +730,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -769,7 +769,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -830,7 +830,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -861,7 +861,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -892,7 +892,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -927,7 +927,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -962,7 +962,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -1000,7 +1000,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -1031,7 +1031,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -1060,7 +1060,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -1104,7 +1104,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -1141,7 +1141,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -1192,7 +1192,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -1223,7 +1223,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -1275,7 +1275,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">201</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 201</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -1325,7 +1325,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>
@@ -1364,7 +1364,7 @@ vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringPr
   <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
   <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
   <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-  <boolProp name="Assertion.assume_success">true</boolProp>
+  <boolProp name="Assertion.assume_success">false</boolProp>
   <intProp name="Assertion.test_type">8</intProp>
 </ResponseAssertion>
 <hashTree></hashTree>

@@ -1,0 +1,11 @@
+# Generated results: .jtl files, logs and HTML dashboards (can be large)
+results/
+
+# Credentials: never commit these
+.env
+.env.*
+!.env.example
+
+# JMeter GUI backups
+*.jmx.bak
+jmeter.log

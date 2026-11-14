@@ -1,0 +1,20 @@
+{
+  "name": "qualitylab-jmeter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Apache JMeter performance tests for the QualityLab REST API.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "scripts": {
+    "smoke": "node scripts/run.js --profile smoke --target local",
+    "baseline:local": "node scripts/run.js --profile baseline --target local",
+    "baseline:deployed": "node scripts/run.js --profile baseline --target deployed",
+    "load:local": "node scripts/run.js --profile load --target local",
+    "stress:local": "node scripts/run.js --profile stress --target local",
+    "spike:local": "node scripts/run.js --profile spike --target local",
+    "endurance:local": "node scripts/run.js --profile endurance --target local",
+    "summarize": "node scripts/summarize.js"
+  }
+}

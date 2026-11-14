@@ -1,0 +1,1387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+<hashTree>
+<TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="QualityLab API performance">
+  <stringProp name="TestPlan.comments">Performance test plan for the QualityLab REST API (/api/v1).
+Settings come from JMeter properties: a target file (targets/*.properties) and a profile file (profiles/*.properties),
+for example: jmeter -n -t plans/qualitylab-api.jmx -q targets/local.properties -q profiles/baseline.properties -l results.jtl -e -o dashboard
+Credentials come from the TEST_USERNAME and TEST_PASSWORD environment variables (read by the setUp safety check).
+Easiest: node scripts/run.js (see README.md).</stringProp>
+  <boolProp name="TestPlan.functional_mode">false</boolProp>
+  <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+  <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+  <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</TestPlan>
+<hashTree>
+<ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults (target)">
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+  <stringProp name="HTTPSampler.protocol">${__P(protocol,http)}</stringProp>
+  <stringProp name="HTTPSampler.domain">${__P(host,localhost)}</stringProp>
+  <stringProp name="HTTPSampler.port">${__P(port,3100)}</stringProp>
+  <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+  <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+  <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
+  <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+</ConfigTestElement>
+<hashTree></hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Headers (JSON)">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Content-Type</stringProp><stringProp name="Header.value">application/json</stringProp></elementProp>
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Accept</stringProp><stringProp name="Header.value">application/json</stringProp></elementProp>
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">User-Agent</stringProp><stringProp name="Header.value">QualityLab-JMeter-performance-tests</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - search terms">
+  <stringProp name="filename">${__P(dataDir,../data)}/search-terms.csv</stringProp>
+  <stringProp name="fileEncoding">UTF-8</stringProp>
+  <stringProp name="variableNames"></stringProp>
+  <boolProp name="ignoreFirstLine">false</boolProp>
+  <stringProp name="delimiter">,</stringProp>
+  <boolProp name="quotedData">false</boolProp>
+  <boolProp name="recycle">true</boolProp>
+  <boolProp name="stopThread">false</boolProp>
+  <stringProp name="shareMode">shareMode.all</stringProp>
+</CSVDataSet>
+<hashTree></hashTree>
+<CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - products (fallback ids)">
+  <stringProp name="filename">${__P(dataDir,../data)}/products.csv</stringProp>
+  <stringProp name="fileEncoding">UTF-8</stringProp>
+  <stringProp name="variableNames"></stringProp>
+  <boolProp name="ignoreFirstLine">false</boolProp>
+  <stringProp name="delimiter">,</stringProp>
+  <boolProp name="quotedData">false</boolProp>
+  <boolProp name="recycle">true</boolProp>
+  <boolProp name="stopThread">false</boolProp>
+  <stringProp name="shareMode">shareMode.all</stringProp>
+</CSVDataSet>
+<hashTree></hashTree>
+<CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - hotel destinations">
+  <stringProp name="filename">${__P(dataDir,../data)}/hotels.csv</stringProp>
+  <stringProp name="fileEncoding">UTF-8</stringProp>
+  <stringProp name="variableNames"></stringProp>
+  <boolProp name="ignoreFirstLine">false</boolProp>
+  <stringProp name="delimiter">,</stringProp>
+  <boolProp name="quotedData">false</boolProp>
+  <boolProp name="recycle">true</boolProp>
+  <boolProp name="stopThread">false</boolProp>
+  <stringProp name="shareMode">shareMode.all</stringProp>
+</CSVDataSet>
+<hashTree></hashTree>
+<CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV - rooms with 2+ units">
+  <stringProp name="filename">${__P(dataDir,../data)}/rooms.csv</stringProp>
+  <stringProp name="fileEncoding">UTF-8</stringProp>
+  <stringProp name="variableNames"></stringProp>
+  <boolProp name="ignoreFirstLine">false</boolProp>
+  <stringProp name="delimiter">,</stringProp>
+  <boolProp name="quotedData">false</boolProp>
+  <boolProp name="recycle">true</boolProp>
+  <boolProp name="stopThread">false</boolProp>
+  <stringProp name="shareMode">shareMode.all</stringProp>
+</CSVDataSet>
+<hashTree></hashTree>
+<DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Response time limit (maxResponseMs)">
+  <stringProp name="DurationAssertion.duration">${__P(maxResponseMs,5000)}</stringProp>
+</DurationAssertion>
+<hashTree></hashTree>
+<JSR223Listener guiclass="TestBeanGUI" testclass="JSR223Listener" testname="_Auto-stop when limits are reached (stopErrorPct, stopP95Ms)">
+  <stringProp name="scriptLanguage">groovy</stringProp>
+  <stringProp name="parameters"></stringProp>
+  <stringProp name="filename"></stringProp>
+  <stringProp name="cacheKey">true</stringProp>
+  <stringProp name="script">// AUTO-STOP (stress and spike safety net)
+// Watches the last 200 samples. When their error rate or 95th percentile passes the profile's limit
+// (stopErrorPct, stopP95Ms), it stops the test gracefully: that is the limit the run was looking for.
+def maxErrorPct = (props.getProperty('stopErrorPct', '0') as double)
+def maxP95 = (props.getProperty('stopP95Ms', '0') as long)
+if (maxErrorPct &lt;= 0 &amp;&amp; maxP95 &lt;= 0) return
+def label = prev.getSampleLabel()
+if (label.startsWith('_') || label.startsWith('Journey')) return
+
+def window = props.get('autoStopWindow')
+if (window == null) {
+    synchronized (props) {
+        window = props.get('autoStopWindow')
+        if (window == null) { window = new java.util.concurrent.ConcurrentLinkedDeque(); props.put('autoStopWindow', window) }
+    }
+}
+window.add([prev.getTime(), prev.isSuccessful()])
+while (window.size() &gt; 200) window.pollFirst()
+if (window.size() &lt; 200 || props.get('autoStopped') != null) return
+
+def samples = window.toArray()
+def errors = samples.count { !it[1] }
+def errorPct = errors * 100.0 / samples.length
+def times = samples.collect { it[0] }.sort()
+def p95 = times[(int) Math.ceil(times.size() * 0.95) - 1]
+def reason = null
+if (maxErrorPct &gt; 0 &amp;&amp; errorPct &gt; maxErrorPct) reason = String.format('error rate %.1f%% &gt; %.1f%%', errorPct, maxErrorPct)
+else if (maxP95 &gt; 0 &amp;&amp; p95 &gt; maxP95) reason = &quot;95th percentile &quot; + p95 + &quot; ms &gt; &quot; + maxP95 + &quot; ms&quot;
+if (reason != null &amp;&amp; props.putIfAbsent('autoStopped', reason) == null) {
+    log.warn(&quot;AUTO-STOP: limit reached (&quot; + reason + &quot;) over the last 200 samples. Stopping the test.&quot;)
+    ctx.getEngine().askThreadsToStop()
+}</stringProp>
+</JSR223Listener>
+<hashTree></hashTree>
+<SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="_setUp - safety check">
+  <stringProp name="ThreadGroup.on_sample_error">stoptest</stringProp>
+  <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+    <stringProp name="LoopController.loops">1</stringProp>
+    <boolProp name="LoopController.continue_forever">false</boolProp>
+  </elementProp>
+  <stringProp name="ThreadGroup.num_threads">1</stringProp>
+  <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+  <boolProp name="ThreadGroup.scheduler">false</boolProp>
+  <stringProp name="ThreadGroup.duration"></stringProp>
+  <stringProp name="ThreadGroup.delay"></stringProp>
+  <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+</SetupThreadGroup>
+<hashTree>
+<JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="_Safety check and credentials">
+  <stringProp name="scriptLanguage">groovy</stringProp>
+  <stringProp name="parameters"></stringProp>
+  <stringProp name="filename"></stringProp>
+  <stringProp name="cacheKey">true</stringProp>
+  <stringProp name="script">// SAFETY CHECK (runs once, before any virtual user starts)
+// 1. Reads the credentials from environment variables, so they never appear in files, logs or reports.
+// 2. Refuses unsafe runs against the deployed (public) site.
+def env = System.getenv()
+['TEST_USERNAME': 'testUsername', 'TEST_PASSWORD': 'testPassword'].each { variable, property -&gt;
+    if (!props.getProperty(property)) {
+        def value = env.get(variable)
+        if (!value) {
+            SampleResult.setSuccessful(false)
+            SampleResult.setResponseMessage(&quot;Set the environment variable &quot; + variable + &quot; (see README).&quot;)
+            SampleResult.setStopTest(true)
+            return
+        }
+        props.put(property, value)
+    }
+}
+
+def host = props.getProperty('host', 'localhost')
+def local = ['localhost', '127.0.0.1'].contains(host)
+def profile = props.getProperty('profile', 'custom')
+int users = (props.getProperty('users', '1') as int) + (props.getProperty('spikeUsers', '0') as int)
+int maxUsers = props.getProperty('deployedMaxUsers', '5') as int
+boolean allowHighLoad = props.getProperty('allowHighLoad', 'false') == 'true'
+boolean approved = props.getProperty('approved', 'false') == 'true'
+
+def problem = null
+if (!local &amp;&amp; ['stress', 'spike', 'endurance'].contains(profile) &amp;&amp; !allowHighLoad) {
+    problem = &quot;The &quot; + profile + &quot; profile is not allowed against the deployed site &quot; + host + &quot;. Run it with the LOCAL target.&quot;
+} else if (!local &amp;&amp; !['smoke', 'baseline'].contains(profile) &amp;&amp; !approved &amp;&amp; !allowHighLoad) {
+    problem = &quot;The &quot; + profile + &quot; profile against the deployed site needs approval (approved=true).&quot;
+} else if (!local &amp;&amp; users &gt; maxUsers &amp;&amp; !allowHighLoad) {
+    problem = users + &quot; users is above the limit of &quot; + maxUsers + &quot; for the deployed site.&quot;
+}
+
+if (problem) {
+    log.error(&quot;SAFETY CHECK: &quot; + problem)
+    SampleResult.setSuccessful(false)
+    SampleResult.setResponseMessage(problem)
+    SampleResult.setStopTest(true)
+} else {
+    log.info(&quot;SAFETY CHECK passed: profile=&quot; + profile + &quot;, target=&quot; + host + &quot;, users=&quot; + users)
+    SampleResult.setResponseMessage(&quot;Safety check passed: &quot; + profile + &quot; against &quot; + host + &quot; with &quot; + users + &quot; users&quot;)
+}</stringProp>
+</JSR223Sampler>
+<hashTree></hashTree>
+</hashTree>
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Virtual users">
+  <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+  <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+    <stringProp name="LoopController.loops">-1</stringProp>
+    <boolProp name="LoopController.continue_forever">false</boolProp>
+  </elementProp>
+  <stringProp name="ThreadGroup.num_threads">${__P(users,1)}</stringProp>
+  <stringProp name="ThreadGroup.ramp_time">${__P(rampUp,1)}</stringProp>
+  <boolProp name="ThreadGroup.scheduler">true</boolProp>
+  <stringProp name="ThreadGroup.duration">${__P(duration,60)}</stringProp>
+  <stringProp name="ThreadGroup.delay">0</stringProp>
+  <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+  <stringProp name="TestPlan.comments">The main users: users, rampUp and duration come from the profile.</stringProp>
+</ThreadGroup>
+<hashTree>
+<GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Think time (thinkMs +/- thinkDeviationMs)">
+  <stringProp name="ConstantTimer.delay">${__P(thinkMs,1000)}</stringProp>
+  <stringProp name="RandomTimer.range">${__P(thinkDeviationMs,300)}</stringProp>
+</GaussianRandomTimer>
+<hashTree></hashTree>
+<OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Sign in once per virtual user">
+  <stringProp name="TestPlan.comments">Each sign-in opens one module, so every virtual user signs in to each module once and reuses the tokens.</stringProp>
+</OnceOnlyController>
+<hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /auth/login (ecommerce)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/auth/login</stringProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+    <collectionProp name="Arguments.arguments">
+      <elementProp name="" elementType="HTTPArgument"><boolProp name="HTTPArgument.always_encode">false</boolProp><stringProp name="Argument.value">{&quot;email&quot;:&quot;${__P(testUsername,)}&quot;,&quot;password&quot;:&quot;${__P(testPassword,)}&quot;,&quot;module&quot;:&quot;ecommerce&quot;}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp>
+    </collectionProp>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract the ecommerce token">
+  <stringProp name="JSONPostProcessor.referenceNames">token_ecommerce</stringProp>
+  <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.token</stringProp>
+  <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+  <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+</JSONPostProcessor>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /auth/login (banking)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/auth/login</stringProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+    <collectionProp name="Arguments.arguments">
+      <elementProp name="" elementType="HTTPArgument"><boolProp name="HTTPArgument.always_encode">false</boolProp><stringProp name="Argument.value">{&quot;email&quot;:&quot;${__P(testUsername,)}&quot;,&quot;password&quot;:&quot;${__P(testPassword,)}&quot;,&quot;module&quot;:&quot;banking&quot;}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp>
+    </collectionProp>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract the banking token">
+  <stringProp name="JSONPostProcessor.referenceNames">token_banking</stringProp>
+  <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.token</stringProp>
+  <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+  <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+</JSONPostProcessor>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /auth/login (travel)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/auth/login</stringProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+    <collectionProp name="Arguments.arguments">
+      <elementProp name="" elementType="HTTPArgument"><boolProp name="HTTPArgument.always_encode">false</boolProp><stringProp name="Argument.value">{&quot;email&quot;:&quot;${__P(testUsername,)}&quot;,&quot;password&quot;:&quot;${__P(testPassword,)}&quot;,&quot;module&quot;:&quot;travel&quot;}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp>
+    </collectionProp>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract the travel token">
+  <stringProp name="JSONPostProcessor.referenceNames">token_travel</stringProp>
+  <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.token</stringProp>
+  <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+  <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+</JSONPostProcessor>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /bank/accounts">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/bank/accounts</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: banking token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_banking}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract the checking account id">
+  <stringProp name="JSONPostProcessor.referenceNames">checkingId</stringProp>
+  <stringProp name="JSONPostProcessor.jsonPathExprs">$.data[?(@.type == 'CHECKING')].id</stringProp>
+  <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+  <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+</JSONPostProcessor>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /auth/me">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/auth/me</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: ecommerce token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_ecommerce}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Session is for E-commerce">
+  <stringProp name="JSON_PATH">$.data.module</stringProp>
+  <stringProp name="EXPECTED_VALUE">ecommerce</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+</hashTree>
+<TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Journey - Shop: browse, search, view a product">
+  <boolProp name="TransactionController.includeTimers">false</boolProp>
+  <boolProp name="TransactionController.parent">false</boolProp>
+  <stringProp name="TestPlan.comments">Product listing, product search and product details (public endpoints).</stringProp>
+</TransactionController>
+<hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /products (listing)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/products?page=1&amp;sort=price_asc</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Listing has products">
+  <stringProp name="JSON_PATH">$.data[0].id</stringProp>
+  <stringProp name="EXPECTED_VALUE"></stringProp>
+  <boolProp name="JSONVALIDATION">false</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /products?q= (search)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/products?q=${__urlencode(${term})}</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Pick a product from the results">
+  <stringProp name="JSONPostProcessor.referenceNames">foundProductId</stringProp>
+  <stringProp name="JSONPostProcessor.jsonPathExprs">$.data[*].id</stringProp>
+  <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+  <stringProp name="JSONPostProcessor.defaultValues">${productId}</stringProp>
+</JSONPostProcessor>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /products/{id} (details)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/products/${foundProductId}</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="It is the chosen product">
+  <stringProp name="JSON_PATH">$.data.id</stringProp>
+  <stringProp name="EXPECTED_VALUE">${foundProductId}</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+</hashTree>
+<TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Journey - Banking: account details and history">
+  <boolProp name="TransactionController.includeTimers">false</boolProp>
+  <boolProp name="TransactionController.parent">false</boolProp>
+  <stringProp name="TestPlan.comments">Read-only: no money is moved under load.</stringProp>
+</TransactionController>
+<hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /bank/accounts/{id} (account details)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/bank/accounts/${checkingId}</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: banking token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_banking}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="It is the checking account">
+  <stringProp name="JSON_PATH">$.data.id</stringProp>
+  <stringProp name="EXPECTED_VALUE">${checkingId}</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /bank/accounts/{id}/transactions (history)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/bank/accounts/${checkingId}/transactions?pageSize=20</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: banking token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_banking}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="History has transactions">
+  <stringProp name="JSON_PATH">$.data[0].reference</stringProp>
+  <stringProp name="EXPECTED_VALUE"></stringProp>
+  <boolProp name="JSONVALIDATION">false</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+</hashTree>
+<TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Journey - Travel: search hotels and check a room">
+  <boolProp name="TransactionController.includeTimers">false</boolProp>
+  <boolProp name="TransactionController.parent">false</boolProp>
+  <stringProp name="TestPlan.comments">Hotel search and room availability (public endpoints).</stringProp>
+</TransactionController>
+<hashTree>
+<JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Pick random stay dates">
+  <stringProp name="scriptLanguage">groovy</stringProp>
+  <stringProp name="parameters"></stringProp>
+  <stringProp name="filename"></stringProp>
+  <stringProp name="cacheKey">true</stringProp>
+  <stringProp name="script">// A random stay 400 to 1,100 days ahead, 1 to 3 nights, so parallel users rarely want the same room
+// on the same nights, and real visitors are not affected.
+def random = new Random()
+def start = java.time.LocalDate.now().plusDays(400 + random.nextInt(700))
+vars.put('checkIn', start.toString())
+vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringProp>
+</JSR223PreProcessor>
+<hashTree></hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /hotels?destination= (hotel search)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/hotels?destination=${__urlencode(${destination})}</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Hotels found">
+  <stringProp name="JSON_PATH">$.data[0].id</stringProp>
+  <stringProp name="EXPECTED_VALUE"></stringProp>
+  <boolProp name="JSONVALIDATION">false</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /rooms/{id} (room availability)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/rooms/${roomId}?checkIn=${checkIn}&amp;checkOut=${checkOut}&amp;guests=1</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="The room is available">
+  <stringProp name="JSON_PATH">$.data.available</stringProp>
+  <stringProp name="EXPECTED_VALUE">true</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+</hashTree>
+<IfController guiclass="IfControllerPanel" testclass="IfController" testname="Bookings enabled (bookings=true)">
+  <stringProp name="IfController.condition">${__jexl3(&quot;${__P(bookings,true)}&quot; == &quot;true&quot;)}</stringProp>
+  <boolProp name="IfController.evaluateAll">false</boolProp>
+  <boolProp name="IfController.useExpression">true</boolProp>
+</IfController>
+<hashTree>
+<TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Journey - Booking: create, read, cancel">
+  <boolProp name="TransactionController.includeTimers">false</boolProp>
+  <boolProp name="TransactionController.parent">false</boolProp>
+  <stringProp name="TestPlan.comments">Each booking made under load is cancelled straight away. Dates are random and far in the future.</stringProp>
+</TransactionController>
+<hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /bookings (create)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/bookings</stringProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+    <collectionProp name="Arguments.arguments">
+      <elementProp name="" elementType="HTTPArgument"><boolProp name="HTTPArgument.always_encode">false</boolProp><stringProp name="Argument.value">{&quot;roomId&quot;:&quot;${roomId}&quot;,&quot;checkIn&quot;:&quot;${checkIn}&quot;,&quot;checkOut&quot;:&quot;${checkOut}&quot;,&quot;guests&quot;:1,&quot;leadGuestName&quot;:&quot;JMeter user ${__threadNum}&quot;}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp>
+    </collectionProp>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: travel token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_travel}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 201">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">201</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 201</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Booking is CONFIRMED">
+  <stringProp name="JSON_PATH">$.data.status</stringProp>
+  <stringProp name="EXPECTED_VALUE">CONFIRMED</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract the booking id">
+  <stringProp name="JSONPostProcessor.referenceNames">bookingId</stringProp>
+  <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.id</stringProp>
+  <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+  <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+</JSONPostProcessor>
+<hashTree></hashTree>
+</hashTree>
+<IfController guiclass="IfControllerPanel" testclass="IfController" testname="Booking was created">
+  <stringProp name="IfController.condition">${__jexl3(&quot;${bookingId}&quot; != &quot;NOT_FOUND&quot;)}</stringProp>
+  <boolProp name="IfController.evaluateAll">false</boolProp>
+  <boolProp name="IfController.useExpression">true</boolProp>
+</IfController>
+<hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /bookings/{id} (details)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/bookings/${bookingId}</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: travel token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_travel}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="It is the new booking">
+  <stringProp name="JSON_PATH">$.data.id</stringProp>
+  <stringProp name="EXPECTED_VALUE">${bookingId}</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /bookings/{id}/cancel (clean-up)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/bookings/${bookingId}/cancel</stringProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+    <collectionProp name="Arguments.arguments">
+      <elementProp name="" elementType="HTTPArgument"><boolProp name="HTTPArgument.always_encode">false</boolProp><stringProp name="Argument.value">{}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp>
+    </collectionProp>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: travel token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_travel}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Booking is CANCELLED">
+  <stringProp name="JSON_PATH">$.data.status</stringProp>
+  <stringProp name="EXPECTED_VALUE">CANCELLED</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+</hashTree>
+</hashTree>
+</hashTree>
+</hashTree>
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Spike users">
+  <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+  <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+    <stringProp name="LoopController.loops">-1</stringProp>
+    <boolProp name="LoopController.continue_forever">false</boolProp>
+  </elementProp>
+  <stringProp name="ThreadGroup.num_threads">${__P(spikeUsers,0)}</stringProp>
+  <stringProp name="ThreadGroup.ramp_time">${__P(spikeRamp,5)}</stringProp>
+  <boolProp name="ThreadGroup.scheduler">true</boolProp>
+  <stringProp name="ThreadGroup.duration">${__P(spikeDuration,60)}</stringProp>
+  <stringProp name="ThreadGroup.delay">${__P(spikeDelay,0)}</stringProp>
+  <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+  <stringProp name="TestPlan.comments">Only used by the spike profile: spikeUsers arrive after spikeDelay seconds, within spikeRamp seconds, and stay for spikeDuration seconds. With spikeUsers=0 this group does nothing.</stringProp>
+</ThreadGroup>
+<hashTree>
+<GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Think time (thinkMs +/- thinkDeviationMs)">
+  <stringProp name="ConstantTimer.delay">${__P(thinkMs,1000)}</stringProp>
+  <stringProp name="RandomTimer.range">${__P(thinkDeviationMs,300)}</stringProp>
+</GaussianRandomTimer>
+<hashTree></hashTree>
+<OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Sign in once per virtual user">
+  <stringProp name="TestPlan.comments">Each sign-in opens one module, so every virtual user signs in to each module once and reuses the tokens.</stringProp>
+</OnceOnlyController>
+<hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /auth/login (ecommerce)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/auth/login</stringProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+    <collectionProp name="Arguments.arguments">
+      <elementProp name="" elementType="HTTPArgument"><boolProp name="HTTPArgument.always_encode">false</boolProp><stringProp name="Argument.value">{&quot;email&quot;:&quot;${__P(testUsername,)}&quot;,&quot;password&quot;:&quot;${__P(testPassword,)}&quot;,&quot;module&quot;:&quot;ecommerce&quot;}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp>
+    </collectionProp>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract the ecommerce token">
+  <stringProp name="JSONPostProcessor.referenceNames">token_ecommerce</stringProp>
+  <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.token</stringProp>
+  <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+  <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+</JSONPostProcessor>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /auth/login (banking)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/auth/login</stringProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+    <collectionProp name="Arguments.arguments">
+      <elementProp name="" elementType="HTTPArgument"><boolProp name="HTTPArgument.always_encode">false</boolProp><stringProp name="Argument.value">{&quot;email&quot;:&quot;${__P(testUsername,)}&quot;,&quot;password&quot;:&quot;${__P(testPassword,)}&quot;,&quot;module&quot;:&quot;banking&quot;}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp>
+    </collectionProp>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract the banking token">
+  <stringProp name="JSONPostProcessor.referenceNames">token_banking</stringProp>
+  <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.token</stringProp>
+  <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+  <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+</JSONPostProcessor>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /auth/login (travel)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/auth/login</stringProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+    <collectionProp name="Arguments.arguments">
+      <elementProp name="" elementType="HTTPArgument"><boolProp name="HTTPArgument.always_encode">false</boolProp><stringProp name="Argument.value">{&quot;email&quot;:&quot;${__P(testUsername,)}&quot;,&quot;password&quot;:&quot;${__P(testPassword,)}&quot;,&quot;module&quot;:&quot;travel&quot;}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp>
+    </collectionProp>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract the travel token">
+  <stringProp name="JSONPostProcessor.referenceNames">token_travel</stringProp>
+  <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.token</stringProp>
+  <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+  <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+</JSONPostProcessor>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /bank/accounts">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/bank/accounts</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: banking token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_banking}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract the checking account id">
+  <stringProp name="JSONPostProcessor.referenceNames">checkingId</stringProp>
+  <stringProp name="JSONPostProcessor.jsonPathExprs">$.data[?(@.type == 'CHECKING')].id</stringProp>
+  <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+  <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+</JSONPostProcessor>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /auth/me">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/auth/me</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: ecommerce token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_ecommerce}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Session is for E-commerce">
+  <stringProp name="JSON_PATH">$.data.module</stringProp>
+  <stringProp name="EXPECTED_VALUE">ecommerce</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+</hashTree>
+<TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Journey - Shop: browse, search, view a product">
+  <boolProp name="TransactionController.includeTimers">false</boolProp>
+  <boolProp name="TransactionController.parent">false</boolProp>
+  <stringProp name="TestPlan.comments">Product listing, product search and product details (public endpoints).</stringProp>
+</TransactionController>
+<hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /products (listing)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/products?page=1&amp;sort=price_asc</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Listing has products">
+  <stringProp name="JSON_PATH">$.data[0].id</stringProp>
+  <stringProp name="EXPECTED_VALUE"></stringProp>
+  <boolProp name="JSONVALIDATION">false</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /products?q= (search)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/products?q=${__urlencode(${term})}</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Pick a product from the results">
+  <stringProp name="JSONPostProcessor.referenceNames">foundProductId</stringProp>
+  <stringProp name="JSONPostProcessor.jsonPathExprs">$.data[*].id</stringProp>
+  <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+  <stringProp name="JSONPostProcessor.defaultValues">${productId}</stringProp>
+</JSONPostProcessor>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /products/{id} (details)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/products/${foundProductId}</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="It is the chosen product">
+  <stringProp name="JSON_PATH">$.data.id</stringProp>
+  <stringProp name="EXPECTED_VALUE">${foundProductId}</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+</hashTree>
+<TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Journey - Banking: account details and history">
+  <boolProp name="TransactionController.includeTimers">false</boolProp>
+  <boolProp name="TransactionController.parent">false</boolProp>
+  <stringProp name="TestPlan.comments">Read-only: no money is moved under load.</stringProp>
+</TransactionController>
+<hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /bank/accounts/{id} (account details)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/bank/accounts/${checkingId}</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: banking token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_banking}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="It is the checking account">
+  <stringProp name="JSON_PATH">$.data.id</stringProp>
+  <stringProp name="EXPECTED_VALUE">${checkingId}</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /bank/accounts/{id}/transactions (history)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/bank/accounts/${checkingId}/transactions?pageSize=20</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: banking token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_banking}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="History has transactions">
+  <stringProp name="JSON_PATH">$.data[0].reference</stringProp>
+  <stringProp name="EXPECTED_VALUE"></stringProp>
+  <boolProp name="JSONVALIDATION">false</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+</hashTree>
+<TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Journey - Travel: search hotels and check a room">
+  <boolProp name="TransactionController.includeTimers">false</boolProp>
+  <boolProp name="TransactionController.parent">false</boolProp>
+  <stringProp name="TestPlan.comments">Hotel search and room availability (public endpoints).</stringProp>
+</TransactionController>
+<hashTree>
+<JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Pick random stay dates">
+  <stringProp name="scriptLanguage">groovy</stringProp>
+  <stringProp name="parameters"></stringProp>
+  <stringProp name="filename"></stringProp>
+  <stringProp name="cacheKey">true</stringProp>
+  <stringProp name="script">// A random stay 400 to 1,100 days ahead, 1 to 3 nights, so parallel users rarely want the same room
+// on the same nights, and real visitors are not affected.
+def random = new Random()
+def start = java.time.LocalDate.now().plusDays(400 + random.nextInt(700))
+vars.put('checkIn', start.toString())
+vars.put('checkOut', start.plusDays(1 + random.nextInt(3)).toString())</stringProp>
+</JSR223PreProcessor>
+<hashTree></hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /hotels?destination= (hotel search)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/hotels?destination=${__urlencode(${destination})}</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Hotels found">
+  <stringProp name="JSON_PATH">$.data[0].id</stringProp>
+  <stringProp name="EXPECTED_VALUE"></stringProp>
+  <boolProp name="JSONVALIDATION">false</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /rooms/{id} (room availability)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/rooms/${roomId}?checkIn=${checkIn}&amp;checkOut=${checkOut}&amp;guests=1</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="The room is available">
+  <stringProp name="JSON_PATH">$.data.available</stringProp>
+  <stringProp name="EXPECTED_VALUE">true</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+</hashTree>
+<IfController guiclass="IfControllerPanel" testclass="IfController" testname="Bookings enabled (bookings=true)">
+  <stringProp name="IfController.condition">${__jexl3(&quot;${__P(bookings,true)}&quot; == &quot;true&quot;)}</stringProp>
+  <boolProp name="IfController.evaluateAll">false</boolProp>
+  <boolProp name="IfController.useExpression">true</boolProp>
+</IfController>
+<hashTree>
+<TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Journey - Booking: create, read, cancel">
+  <boolProp name="TransactionController.includeTimers">false</boolProp>
+  <boolProp name="TransactionController.parent">false</boolProp>
+  <stringProp name="TestPlan.comments">Each booking made under load is cancelled straight away. Dates are random and far in the future.</stringProp>
+</TransactionController>
+<hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /bookings (create)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/bookings</stringProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+    <collectionProp name="Arguments.arguments">
+      <elementProp name="" elementType="HTTPArgument"><boolProp name="HTTPArgument.always_encode">false</boolProp><stringProp name="Argument.value">{&quot;roomId&quot;:&quot;${roomId}&quot;,&quot;checkIn&quot;:&quot;${checkIn}&quot;,&quot;checkOut&quot;:&quot;${checkOut}&quot;,&quot;guests&quot;:1,&quot;leadGuestName&quot;:&quot;JMeter user ${__threadNum}&quot;}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp>
+    </collectionProp>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: travel token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_travel}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 201">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">201</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 201</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Booking is CONFIRMED">
+  <stringProp name="JSON_PATH">$.data.status</stringProp>
+  <stringProp name="EXPECTED_VALUE">CONFIRMED</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+<JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract the booking id">
+  <stringProp name="JSONPostProcessor.referenceNames">bookingId</stringProp>
+  <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.id</stringProp>
+  <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+  <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+</JSONPostProcessor>
+<hashTree></hashTree>
+</hashTree>
+<IfController guiclass="IfControllerPanel" testclass="IfController" testname="Booking was created">
+  <stringProp name="IfController.condition">${__jexl3(&quot;${bookingId}&quot; != &quot;NOT_FOUND&quot;)}</stringProp>
+  <boolProp name="IfController.evaluateAll">false</boolProp>
+  <boolProp name="IfController.useExpression">true</boolProp>
+</IfController>
+<hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /bookings/{id} (details)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/bookings/${bookingId}</stringProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: travel token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_travel}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="It is the new booking">
+  <stringProp name="JSON_PATH">$.data.id</stringProp>
+  <stringProp name="EXPECTED_VALUE">${bookingId}</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /bookings/{id}/cancel (clean-up)">
+  <stringProp name="HTTPSampler.path">${__P(basePath,/api/v1)}/bookings/${bookingId}/cancel</stringProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+    <collectionProp name="Arguments.arguments">
+      <elementProp name="" elementType="HTTPArgument"><boolProp name="HTTPArgument.always_encode">false</boolProp><stringProp name="Argument.value">{}</stringProp><stringProp name="Argument.metadata">=</stringProp></elementProp>
+    </collectionProp>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree>
+<HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorization: travel token">
+  <collectionProp name="HeaderManager.headers">
+    <elementProp name="" elementType="Header"><stringProp name="Header.name">Authorization</stringProp><stringProp name="Header.value">Bearer ${token_travel}</stringProp></elementProp>
+  </collectionProp>
+</HeaderManager>
+<hashTree></hashTree>
+<ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Status is 200">
+  <collectionProp name="Asserion.test_strings"><stringProp name="code">200</stringProp></collectionProp>
+  <stringProp name="Assertion.custom_message">Expected HTTP 200</stringProp>
+  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+  <boolProp name="Assertion.assume_success">true</boolProp>
+  <intProp name="Assertion.test_type">8</intProp>
+</ResponseAssertion>
+<hashTree></hashTree>
+<JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Booking is CANCELLED">
+  <stringProp name="JSON_PATH">$.data.status</stringProp>
+  <stringProp name="EXPECTED_VALUE">CANCELLED</stringProp>
+  <boolProp name="JSONVALIDATION">true</boolProp>
+  <boolProp name="EXPECT_NULL">false</boolProp>
+  <boolProp name="INVERT">false</boolProp>
+  <boolProp name="ISREGEX">false</boolProp>
+</JSONPathAssertion>
+<hashTree></hashTree>
+</hashTree>
+</hashTree>
+</hashTree>
+</hashTree>
+</hashTree>
+</hashTree>
+</hashTree>
+</jmeterTestPlan>

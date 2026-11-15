@@ -1,5 +1,8 @@
 # QualityLab: performance testing with Apache JMeter
 
+> Part of **[QualityLab](https://github.com/jjjgbrioso/QualityLab)**, a QA portfolio project. The app under test is live at https://quality-lab-jb.vercel.app.
+> Test projects: [Selenium Java](https://github.com/jjjgbrioso/qualitylab-selenium-java) · [Playwright TypeScript](https://github.com/jjjgbrioso/qualitylab-playwright-typescript) · [Postman + Newman](https://github.com/jjjgbrioso/qualitylab-api-testing) · [JMeter](https://github.com/jjjgbrioso/qualitylab-jmeter)
+
 Performance tests for the QualityLab REST API (`/api/v1`) with Apache JMeter. One test plan covers five kinds of test (baseline, load, stress, spike and endurance), chosen by a profile file. Each run ends with JMeter's HTML dashboard and a Markdown table of the measured metrics.
 
 The project is independent of the web application and of the Selenium, Playwright and Postman projects. It only calls the public REST API.
@@ -105,7 +108,7 @@ The targets are in `targets/local.properties` and `targets/deployed.properties`:
 
 ### The LOCAL target
 
-QualityLab must be running on this PC. In two PowerShell windows, both in `C:\dev\QualityLab\web-app`:
+QualityLab must be running on this PC, from a clone of the [QualityLab](https://github.com/jjjgbrioso/QualityLab) repo. In two PowerShell windows, both in its `web-app` folder (here `C:\dev\QualityLab\web-app`):
 
 Window 1, the local database (leave it running):
 ```powershell
